@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}二维码失效 - 趣调研{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>二维码已失效</h1>
+    <p class="sub">请回到电脑重新打开扫码窗口。</p>
+    <p><a class="btn btn-primary" href="{% url 'pages:home' %}">回到首页</a></p>
+  </div>
+</div>
+{% endblock %}

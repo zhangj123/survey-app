@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}趣调研{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="topbar">
+    <a class="brand" href="{% url 'pages:home' %}">
+      <span class="logo" aria-hidden="true">趣</span>
+      <span>趣调研</span>
+    </a>
+    <nav class="nav-main" aria-label="主导航">
+      <a class="nav-link{% if request.resolver_match.url_name == 'home' %} is-active{% endif %}" href="{% url 'pages:home' %}">首页</a>
+      <a class="nav-link{% if request.resolver_match.url_name == 'apps' %} is-active{% endif %}" href="{% url 'pages:apps' %}">应用</a>
+      <a class="nav-link{% if request.resolver_match.url_name == 'templates' %} is-active{% endif %}" href="{% url 'pages:templates' %}">问卷模版</a>
+    </nav>
+    <nav class="nav-auth" aria-label="账户">
+      {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'surveys:list' %}">填写</a>
+        <a class="nav-link" href="{% url 'surveys:manage' %}">我的问卷</a>
+        <span class="nav-user">{{ user.username }}</span>
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button class="btn btn-ghost" type="submit">退出</button>
+        </form>
+      {% else %}
+        <button class="sns-btn sns-wechat" type="button" data-scan="wechat" title="微信扫码登录">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9.5 8.2c.6 0 1.1-.5 1.1-1.1S10.1 6 9.5 6s-1.1.5-1.1 1.1.5 1.1 1.1 1.1zm5 0c.6 0 1.1-.5 1.1-1.1S15.1 6 14.5 6s-1.1.5-1.1 1.1.5 1.1 1.1 1.1zM12 3C6.8 3 2.5 6.6 2.5 11c0 2.4 1.3 4.5 3.4 6l-.8 2.5 2.7-1.4c1.3.4 2.7.6 4.2.6 5.2 0 9.5-3.6 9.5-8S17.2 3 12 3z"/></svg>
+          <span>微信</span>
+        </button>
+        <button class="sns-btn sns-qq" type="button" data-scan="qq" title="QQ 扫码登录">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 3c-1.8 1.6-3 4-3 6.2 0 .4 0 .8.1 1.1C6.8 11 5 13.4 5 16.1c0 .7.2 2 1.2 2.3.5-1.3 1-2.2 1.3-2.5-.2 1.7.3 3.4 1.6 4.5-.7.2-1.3.7-1.6 1.4 1.5.3 2.8-.2 3.5-.7.7.5 2 1 3.5.7-.3-.7-.9-1.2-1.6-1.4 1.3-1.1 1.8-2.8 1.6-4.5.3.3.8 1.2 1.3 2.5 1-.3 1.2-1.6 1.2-2.3 0-2.7-1.8-5.1-4.1-5.8.1-.3.1-.7.1-1.1C15 7 13.8 4.6 12 3z"/></svg>
+          <span>QQ</span>
+        </button>
+        <a class="link-btn" href="{% url 'accounts:login' %}">登录</a>
+        <a class="btn btn-primary" href="{% url 'accounts:register' %}">免费注册</a>
+      {% endif %}
+    </nav>
+  </header>
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+  {% block content %}{% endblock %}
+
+  <div class="scan-overlay" id="scan-overlay" hidden>
+    <div class="scan-dialog" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+      <button class="scan-close" type="button" id="scan-close" aria-label="关闭">×</button>
+      <div class="scan-brand" id="scan-brand"></div>
+      <h2 id="scan-title">扫码登录</h2>
+      <p class="scan-hint" id="scan-hint"></p>
+      <div class="scan-qr"><img id="scan-qr-img" alt="登录二维码"></div>
+      <p class="scan-status" id="scan-status">等待扫码…</p>
+      <p class="scan-alt">也可以 <a href="{% url 'accounts:login' %}">账号登录</a> 或 <a href="{% url 'accounts:register' %}">免费注册</a></p>
+    </div>
+  </div>
+  {% csrf_token %}
+  <script src="{% static 'js/scan-login.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

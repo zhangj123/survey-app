@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}应用 - 趣调研{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}">{% endblock %}
+{% block content %}
+<main class="marketing">
+  <h1>应用</h1>
+  <p class="lead">把问卷从「好麻烦」变成「好好玩」的三个小工具。</p>
+  <div class="app-grid">
+    <article class="app-card">
+      <div class="app-icon">✏️</div>
+      <h2>问卷编辑器</h2>
+      <p>单选、多选、下拉、填空、简答、评分，拖一拖就能排好。</p>
+      <a class="btn btn-primary" href="{% url 'surveys:manage' %}">去创建</a>
+    </article>
+    <article class="app-card">
+      <div class="app-icon">🧃</div>
+      <h2>在线填写</h2>
+      <p>朋友打开就能填，进度条会跟着走，提交后还能看自己的答卷。</p>
+      <a class="btn btn-primary" href="{% url 'surveys:list' %}">去填写</a>
+    </article>
+    <article class="app-card">
+      <div class="app-icon">📦</div>
+      <h2>问卷模版</h2>
+      <p>活动报名、课程反馈、聚会投票……选一套改改就能用。</p>
+      <a class="btn btn-primary" href="{% url 'pages:templates' %}">逛模版</a>
+    </article>
+  </div>
+</main>
+{% endblock %}

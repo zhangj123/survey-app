@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}免费注册 - 趣调研{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>注册</h1>
+    <p class="sub">免费注册趣调研，马上创建或填写问卷</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="form-error">{{ form.non_field_errors.0 }}</div>
+      {% endif %}
+      {% for field in form %}
+        <div class="field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {{ field.errors }}
+        </div>
+      {% endfor %}
+      <button class="btn btn-primary full-btn" type="submit">注册并登录</button>
+    </form>
+    <p class="switch">已有账号？<a href="{% url 'accounts:login' %}">去登录</a></p>
+  </div>
+</div>
+{% endblock %}

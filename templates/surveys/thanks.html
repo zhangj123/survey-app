@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}提交成功 - 问卷{% endblock %}
+{% block content %}
+<main class="wrap">
+  <section class="thanks">
+    <h1>提交成功</h1>
+    <p>感谢您填写「{{ survey.title }}」。</p>
+    <p class="thanks-actions">
+      <a class="btn btn-primary" href="{% url 'surveys:result' survey.pk %}">查看答卷</a>
+      <a class="btn btn-ghost" href="{% url 'surveys:list' %}">返回问卷列表</a>
+    </p>
+  </section>
+</main>
+{% endblock %}

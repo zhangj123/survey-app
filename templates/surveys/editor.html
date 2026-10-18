@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}编辑问卷 - {{ survey.title }}{% endblock %}
+{% block content %}
+<main class="editor-page">
+  {% csrf_token %}
+  <div class="editor-toolbar">
+    <a class="btn btn-ghost" href="{% url 'surveys:manage' %}">返回</a>
+    <span class="save-status" id="save-status">已保存</span>
+    <div class="toolbar-right">
+      <label class="minutes-field">预计
+        <input id="survey-minutes" type="number" min="1" max="180" value="{{ survey.estimated_minutes }}">
+        分钟
+      </label>
+      <a class="btn btn-ghost" href="{% url 'surveys:preview' survey.pk %}" target="_blank" rel="noopener">预览</a>
+      <button class="btn btn-primary" type="button" id="publish-btn"></button>
+    </div>
+  </div>
+
+  <section class="editor-canvas">
+    <input id="survey-title" class="survey-title-input" maxlength="200" placeholder="问卷标题">
+    <textarea id="survey-desc" class="survey-desc-input" rows="3" maxlength="2000" placeholder="问卷说明（选填）"></textarea>
+
+    <div id="question-list"></div>
+
+    <div class="add-question">
+      <p class="add-label">添加题目</p>
+      <div class="type-grid" id="type-grid"></div>
+    </div>
+  </section>
+</main>
+{{ payload|json_script:"editor-data" }}
+<script src="{% static 'js/editor.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}我的问卷 - 问卷{% endblock %}
+{% block content %}
+<main class="wrap">
+  <div class="page-head">
+    <h1 class="page-title">待填写问卷</h1>
+    <a class="btn btn-primary" href="{% url 'surveys:manage' %}">去创建问卷</a>
+  </div>
+  {% for survey in surveys %}
+    <article class="survey-card">
+      <div>
+        <h2>{{ survey.title }}</h2>
+        {% if survey.description %}<p class="survey-desc">{{ survey.description }}</p>{% endif %}
+        <div class="meta">共 {{ survey.question_count }} 题 · 约 {{ survey.estimated_minutes }} 分钟</div>
+      </div>
+      {% if survey.id in submitted_ids %}
+        <div class="card-actions">
+          <span class="badge">已提交</span>
+          <a class="btn btn-ghost" href="{% url 'surveys:result' survey.pk %}">查看答卷</a>
+        </div>
+      {% else %}
+        <a class="btn btn-primary" href="{% url 'surveys:fill' survey.pk %}">开始填写</a>
+      {% endif %}
+    </article>
+  {% empty %}
+    <p class="meta">暂无已发布的问卷。</p>
+  {% endfor %}
+</main>
+{% endblock %}

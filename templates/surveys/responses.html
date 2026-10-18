@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}回收数据 - {{ survey.title }}{% endblock %}
+{% block content %}
+<main class="wrap">
+  <div class="page-head">
+    <h1 class="page-title">{{ survey.title }} · 回收</h1>
+    <a class="btn btn-ghost" href="{% url 'surveys:editor' survey.pk %}">返回编辑</a>
+  </div>
+  <p class="meta">共 {{ responses|length }} 份答卷</p>
+  {% for item in responses %}
+    <article class="survey-card">
+      <div>
+        <h2>{{ item.user.username }}</h2>
+        <div class="meta">{{ item.submitted_at }}</div>
+      </div>
+      <a class="btn btn-primary" href="{% url 'surveys:owner_response' survey.pk item.pk %}">查看</a>
+    </article>
+  {% empty %}
+    <p class="meta">还没有人提交这份问卷。</p>
+  {% endfor %}
+</main>
+{% endblock %}

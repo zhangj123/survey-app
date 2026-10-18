@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static survey_extras %}
+{% block title %}{{ survey.title }} - 问卷{% endblock %}
+{% block content %}
+<main class="wrap">
+  <section class="survey-head">
+    <h1>{{ survey.title }}</h1>
+    <p>{{ survey.description }}</p>
+    {% if preview %}
+      <p class="q-hint" style="margin-top:12px">预览模式，不会真正提交答案。</p>
+    {% elif owner_view %}
+      <p class="q-hint" style="margin-top:12px">填写人：{{ respondent.username }}</p>
+    {% elif readonly %}
+      <p class="q-hint" style="margin-top:12px">这是您已提交的答卷，仅供查看。</p>
+    {% endif %}
+  </section>
+
+  {% if not readonly and not preview %}
+  <div class="progress-bar" id="progress-bar">
+    <div class="progress-meta">
+      <span>填写进度</span>
+      <span id="progress-text">0 / {{ questions|length }}</span>
+    </div>
+    <div class="progress-track"><i id="progress-fill"></i></div>
+  </div>
+  {% endif %}
+
+  <form id="survey-form" method="post" {% if readonly %}class="is-readonly"{% endif %}>
+    {% csrf_token %}
+    {% for q in questions %}
+      {% with qid=q.id|stringformat:"s" %}
+      <section class="q-card{% if errors|get_item:qid %} has-error{% endif %}" data-qid="{{ q.id }}" data-required="{{ q.required|yesno:'1,0' }}" data-type="{{ q.qtype }}">
+        <h2 class="q-title">{% if q.required %}<span class="req">*</span>{% endif %}{{ q.order }}. {{ q.title }}</h2>
+        {% if q.hint %}<p class="q-hint">{{ q.hint }}</p>{% endif %}
+
+        {% if q.qtype == QuestionType.SINGLE %}
+          {% for opt in q.options %}
+            <label class="option">
+              <input type="radio" name="q_{{ q.id }}" value="{{ opt }}" {% if posted|get_item:qid == opt %}checked{% endif %} {% if readonly %}disabled{% endif %}>
+              <span>{{ opt }}</span>
+            </label>
+          {% endfor %}
+        {% elif q.qtype == QuestionType.MULTIPLE %}
+          {% for opt in q.options %}
+            <label class="option">
+              <input type="checkbox" name="q_{{ q.id }}" value="{{ opt }}" {% if opt in posted|get_item:qid %}checked{% endif %} {% if readonly %}disabled{% endif %}>
+              <span>{{ opt }}</span>
+            </label>
+          {% endfor %}
+        {% elif q.qtype == QuestionType.DROPDOWN %}
+          <div class="field">
+            <select name="q_{{ q.id }}" {% if readonly %}disabled{% endif %}>
+              <option value="">请选择</option>
+              {% for opt in q.options %}
+                <option value="{{ opt }}" {% if posted|get_item:qid == opt %}selected{% endif %}>{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% elif q.qtype == QuestionType.TEXT %}
+          <div class="field">
+            <input type="text" name="q_{{ q.id }}" placeholder="请输入" value="{{ posted|get_item:qid|default:'' }}" {% if readonly %}disabled{% endif %}>
+          </div>
+        {% elif q.qtype == QuestionType.TEXTAREA %}
+          <div class="field">
+            <textarea name="q_{{ q.id }}" rows="4" placeholder="请输入" {% if readonly %}disabled{% endif %}>{{ posted|get_item:qid|default:'' }}</textarea>
+          </div>
+        {% elif q.qtype == QuestionType.RATING %}
+          <div class="rating">
+            {% with ''|center:q.scale_max as slots %}
+            {% for _ in slots %}
+              <label>
+                <input type="radio" name="q_{{ q.id }}" value="{{ forloop.counter }}" {% if posted|get_item:qid == forloop.counter|stringformat:'s' %}checked{% endif %} {% if readonly %}disabled{% endif %}>
+                <span>{{ forloop.counter }}</span>
+              </label>
+            {% endfor %}
+            {% endwith %}
+          </div>
+        {% endif %}
+
+        {% if not readonly %}
+        <p class="q-error{% if not errors|get_item:qid %} is-hidden{% endif %}">{{ errors|get_item:qid|default:"这是必答题" }}</p>
+        {% endif %}
+      </section>
+      {% endwith %}
+    {% endfor %}
+    <div class="actions">
+      {% if preview %}
+        <a class="btn btn-primary" href="{% url 'surveys:editor' survey.pk %}">返回编辑</a>
+      {% elif owner_view %}
+        <a class="btn btn-primary" href="{% url 'surveys:responses' survey.pk %}">返回回收</a>
+      {% elif readonly %}
+        <a class="btn btn-primary" href="{% url 'surveys:list' %}">返回列表</a>
+      {% else %}
+        <button class="btn btn-primary" type="submit">提交问卷</button>
+      {% endif %}
+    </div>
+  </form>
+</main>
+{% if not readonly and not preview %}
+<script src="{% static 'js/survey.js' %}"></script>
+{% endif %}
+{% endblock %}

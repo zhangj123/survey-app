@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}我的问卷 - 问卷{% endblock %}
+{% block content %}
+<main class="wrap wrap-wide">
+  <div class="page-head">
+    <h1 class="page-title">我创建的问卷</h1>
+    <form method="post" action="{% url 'surveys:create' %}">
+      {% csrf_token %}
+      <button class="btn btn-primary" type="submit">创建问卷</button>
+    </form>
+  </div>
+  {% for survey in surveys %}
+    <article class="survey-card">
+      <div>
+        <h2>{{ survey.title }}</h2>
+        <div class="meta">
+          {% if survey.is_published %}
+            <span class="badge">已发布</span>
+          {% else %}
+            <span class="badge badge-muted">草稿</span>
+          {% endif %}
+          共 {{ survey.question_count }} 题 · 回收 {{ survey.response_count }} 份
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn btn-ghost" href="{% url 'surveys:editor' survey.pk %}">编辑</a>
+        <a class="btn btn-ghost" href="{% url 'surveys:preview' survey.pk %}">预览</a>
+        <a class="btn btn-ghost" href="{% url 'surveys:responses' survey.pk %}">回收</a>
+        {% if survey.is_published %}
+          <a class="btn btn-ghost" href="{% url 'surveys:fill' survey.pk %}">填写链接</a>
+        {% endif %}
+        <form method="post" action="{% url 'surveys:delete' survey.pk %}" onsubmit="return confirm('确定删除这份问卷？删除后无法恢复。');">
+          {% csrf_token %}
+          <button class="btn btn-ghost danger" type="submit">删除</button>
+        </form>
+      </div>
+    </article>
+  {% empty %}
+    <p class="meta">还没有问卷。点击右上角「创建问卷」，即可像问卷星一样添加题目并发布。</p>
+  {% endfor %}
+</main>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}问卷模版 - 趣调研{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}">{% endblock %}
+{% block content %}
+<main class="marketing">
+  <h1>问卷模版</h1>
+  <p class="lead">选一个喜欢的开始，标题和题目都可以再改。</p>
+  <div class="tpl-grid">
+    {% for item in templates %}
+      <article class="tpl-card">
+        <span class="mini-emoji">{{ item.emoji }}</span>
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.blurb }}</p>
+        <p class="meta">约 {{ item.estimated_minutes }} 分钟 · {{ item.questions|length }} 题</p>
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'pages:use_template' item.slug %}">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">使用模版</button>
+          </form>
+        {% else %}
+          <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={% url 'pages:templates' %}">登录后使用</a>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</main>
+{% endblock %}

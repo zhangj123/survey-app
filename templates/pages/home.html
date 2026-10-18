@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}趣调研 - 做问卷也可以很有趣{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}">{% endblock %}
+{% block body_class %}is-home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">可爱一点，调研也轻松</p>
+    <h1>趣调研</h1>
+    <p class="lead">3 分钟做出好看问卷，发给朋友就能填。创建、填写、回收，都暖暖的，不端着。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary btn-lg" href="{% url 'accounts:register' %}">免费开始</a>
+      <a class="btn btn-ghost btn-lg" href="{% url 'pages:templates' %}">看看问卷模版</a>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    {% include "pages/_mascot.html" %}
+  </div>
+</section>
+
+<section class="home-strip">
+  <h2>先从模版玩起来</h2>
+  <div class="mini-templates">
+    {% for item in templates %}
+      <article class="mini-card">
+        <span class="mini-emoji">{{ item.emoji }}</span>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.blurb }}</p>
+      </article>
+    {% endfor %}
+  </div>
+  <p class="more-link"><a href="{% url 'pages:templates' %}">全部问卷模版 →</a></p>
+</section>
+{% endblock %}
